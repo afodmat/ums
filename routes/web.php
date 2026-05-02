@@ -18,3 +18,7 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+//example of a protected route
+// Route::get('/admin/dashboard', function () {
+//     return view('admin.dashboard');
+// })->middleware('role:admin');
