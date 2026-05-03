@@ -18,9 +18,12 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
+        'user_number',
+        'email'
     ];
 
     /**
@@ -44,5 +47,44 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public static function generateUserNumber($role): string
+    {
+        $prefix = match ($role) {
+            'admin' => 'AD',
+            'student' => 'ST',
+            'lecturer' => 'LEC',
+            'finance' => 'FIN',
+            default => 'US',
+        };
+
+        $last = self::where('user_number', 'like', $prefix.'%')
+            ->orderBy('user_number', 'desc')
+            ->first();
+
+        if (!$last) {
+            $next = 1;
+        } else {
+            $number = (int) substr($last->user_number, strlen($prefix));
+            $next = $number + 1;
+        }
+
+        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
+
+     public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function lecturer()
+    {
+        return $this->hasOne(Lecturer::class);
+    }
+
+    public function admin()
+    {
+        return $this->hasOne(Admin::class);
     }
 }

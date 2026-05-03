@@ -15,6 +15,7 @@ class RolePermisionSeeder extends Seeder
     public function run(): void
     {
         //roles
+        $superAdmin = Role::firstOrCreate(['name' => 'super_admin']);
         $guest = Role::firstOrCreate(['name' => 'guest']);
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $student = Role::firstOrCreate(['name' => 'student']);
@@ -45,6 +46,7 @@ class RolePermisionSeeder extends Seeder
         $recordPayments = Permission::firstOrCreate(['name' => 'record payments']);
 
         //role permission assignment (pivot table)
+        $superAdmin->givePermissionTo(Permission::all());
         $admin->givePermissionTo([
             $registerStudent,
             $viewStudents,

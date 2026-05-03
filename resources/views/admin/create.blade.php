@@ -1,5 +1,5 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+<x-app-layout>
+    <form method="POST" action="{{ route('admin.store') }}"  enctype="multipart/form-data">
         @csrf
 
         <!-- Name -->
@@ -11,15 +11,39 @@
 
         <div>
             <x-input-label for="last_name" :value="__('LastName')" />
-            <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')" required autofocus autocomplete="last_name" />
+            <x-text-input id="last_name" class="block mt-1 w-full" type="text" name="last_name" :value="old('last_name')" required autocomplete="last_name" />
             <x-input-error :messages="$errors->get('last_name')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="role" :value="__('Role')" />
+            <select name="role" id="role" class="block mt-1 w-full">
+                <option value="admin">Admin</option>
+                <option value="student">Student</option>
+                <option value="lecturer">Lecturer</option>
+                <option value="finance">Finance</option>
+            </select>
         </div>
 
         <!-- Email Address -->
         <div class="mt-4">
             <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')"  autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        </div>
+
+        <!-- phone -->
+        <div class="mt-4">
+            <x-input-label for="phone" :value="__('phone')" />
+            <x-text-input id="phone" class="block mt-1 w-full" type="tel" name="phone" :value="old('phone')" autocomplete="username" />
+            <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+        </div>
+
+        <!-- photo -->
+        <div class="mt-4">
+            <x-input-label for="photo" :value="__('photo')" />
+            <x-text-input id="photo" class="block mt-1 w-full" type="file" name="photo" :value="old('photo')" required autocomplete="username" />
+            <x-input-error :messages="$errors->get('photo')" class="mt-2" />
         </div>
 
         <!-- Password -->
@@ -45,7 +69,7 @@
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
-        <div class="flex items-center justify-end mt-4">
+        <!-- <div class="flex items-center justify-end mt-4">
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
@@ -53,6 +77,12 @@
             <x-primary-button class="ms-4">
                 {{ __('Register') }}
             </x-primary-button>
+        </div> -->
+
+        <div class="flex items-center justify-end mt-4">
+            <x-primary-button>
+                {{ __('Create User') }}
+            </x-primary-button>
         </div>
     </form>
-</x-guest-layout>
+</x-app-layout>
