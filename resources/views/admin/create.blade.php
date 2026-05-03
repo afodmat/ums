@@ -81,7 +81,7 @@
 
         <div class="flex items-center justify-end mt-4">
             <x-primary-button>
-                {{ __('Create User') }}
+                {{ __('Create Admin') }}
             </x-primary-button>
         </div>
     </form>

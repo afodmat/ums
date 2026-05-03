@@ -110,8 +110,11 @@ class AdminController extends Controller
                 'password'    => Hash::make($request->password),
                 'email'   => $request->email,
             ]);
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
+}
             if ($request->role === 'admin') {
-                Amin::update([
+                Admin::update([
                     'user_id' => $user->id,
                     'phone'   => $request->phone,
                     'photo'   => $request->photo,
