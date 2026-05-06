@@ -2,65 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Program;
 use App\Models\CourseUnit;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class CourseUnitController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $courseUnits = CourseUnit::with('program')->get();
+        return view('courseUnit.index', compact('courseUnits'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $programs = Program::all();
+        return view('courseUnit.create', compact('programs'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'nullable|string',
+            'program_id' => 'nullable|exists:programs,id'
+        ]);
+
+        $courseUnit = CourseUnit::create($validated);
+        return redirect()->route('courseUnit.index')->with('success', 'Course unit created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CourseUnit $courseUnit)
+    public function show($id)
     {
-        //
+        $courseUnit = CourseUnit::findOrFail($id);
+        return view('courseUnit.show', compact('courseUnit'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(CourseUnit $courseUnit)
     {
-        //
+        $programs = Program::all();
+        return view('courseUnit.edit', compact('courseUnit', 'programs'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, CourseUnit $courseUnit)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'description' => 'nullable|string',
+            'program_id' => 'nullable|exists:programs,id'
+        ]);
+        
+        $courseUnit = CourseUnit::findOrFail($id);
+        $courseUnit->update($validated);
+        
+        return redirect()->route('courseUnit.index')->with('success', 'Course unit updated successfully');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(CourseUnit $courseUnit)
     {
-        //
+        $courseUnit->delete();
+        return redirect()->route('courseUnit.index')->with('success', 'Course unit deleted successfully');
     }
 }

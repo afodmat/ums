@@ -3,6 +3,10 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProgramController;
+use App\Http\Controllers\CourseUnitController;
+use App\Http\Controllers\LecturerController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -32,6 +36,36 @@ Route::middleware('auth')->group(function () {
     Route::post('/program/store', [ProgramController::class, 'store'])->name('program.store');
     Route::patch('/program/update', [ProgramController::class, 'update'])->name('program.update');
     Route::delete('/program', [ProgramController::class, 'delete'])->name('program.delete');
+
+    Route::get('/courseUnit', [CourseUnitController::class, 'index'])->name('courseUnit.index');
+    Route::get('/courseUnit/create', [CourseUnitController::class, 'create'])->name('courseUnit.create');
+    Route::get('/courseUnit/show/{id}', [CourseUnitController::class, 'show'])->name('courseUnit.show');
+    Route::get('/courseUnit/edit/{id}', [CourseUnitController::class, 'edit'])->name('courseUnit.edit');
+    Route::post('/courseUnit/store', [CourseUnitController::class, 'store'])->name('courseUnit.store');
+    Route::patch('/courseUnit/update', [CourseUnitController::class, 'update'])->name('courseUnit.update');
+    Route::delete('/courseUnit', [CourseUnitController::class, 'delete'])->name('courseUnit.delete');
+
+
+    // Only users with 'student' role can access these
+    Route::middleware(['role:student'])->prefix('student')->name('student.')->group(function () {
+        Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
+        Route::get('/courses', [StudentController::class, 'courses'])->name('courses');
+        Route::get('/courses/{id}', [StudentController::class, 'courseShow'])->name('courses.show');
+        Route::get('/grades', [StudentController::class, 'grades'])->name('grades');
+        Route::get('/attendance', [StudentController::class, 'attendance'])->name('attendance');
+        Route::get('/schedule', [StudentController::class, 'schedule'])->name('schedule');
+        Route::get('/profile', [StudentController::class, 'profile'])->name('profile');
+    });
+
+    // ==================== LECTURER ROUTES ====================
+    // Only users with 'lecturer' role can access these
+    Route::middleware(['role:lecturer'])->prefix('lecturer')->name('lecturer.')->group(function () {
+        Route::get('/dashboard', [LecturerController::class, 'dashboard'])->name('dashboard');
+        Route::get('/courses', [LecturerController::class, 'courses'])->name('courses');
+        Route::get('/courses/{id}', [LecturerController::class, 'courseShow'])->name('courses.show');
+        Route::get('/students/{id}', [LecturerController::class, 'studentShow'])->name('student.show');
+        Route::get('/schedule', [LecturerController::class, 'schedule'])->name('schedule');
+    });
 });
 
 require __DIR__.'/auth.php';

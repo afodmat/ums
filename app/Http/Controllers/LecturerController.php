@@ -2,65 +2,70 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\CourseUnit;
 use App\Models\Lecturer;
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LecturerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function dashboard()
     {
-        //
+        $lecturer = Auth::user()->lecturer;
+        
+        $coursesCount = $lecturer->courses()->count();
+        $studentsCount = $lecturer->courses()->with('students')->get()->sum(function($course) {
+            return $course->students->count();
+        });
+        $pendingGrading = 0; // Calculate based on assignments
+        $consultationHours = 5; // Default or from settings
+        
+        $myCourses = $lecturer->courses()->withCount('students')->get();
+        $todaySchedule = []; // Fetch from schedule table
+        $recentSubmissions = []; // Fetch recent submissions needing grading
+        
+        return view('lecturer.dashboard', compact(
+            'coursesCount', 'studentsCount', 'pendingGrading', 
+            'consultationHours', 'myCourses', 'todaySchedule', 
+            'recentSubmissions'
+        ));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    
+    public function courses()
     {
-        //
+        $courses = Auth::user()->lecturer->courses()->withCount(['students', 'assignments'])->get();
+        return view('lecturer.courses', compact('courses'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    
+    public function courseShow($id)
     {
-        //
+        $course = CourseUnit::with(['students.user', 'assignments'])->findOrFail($id);
+        
+        // Verify lecturer owns this course
+        if ($course->lecturer_id !== Auth::user()->lecturer->id) {
+            abort(403);
+        }
+        
+        return view('lecturer.course-show', compact('course'));
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Lecturer $lecturer)
+    
+    public function courseStudents($id)
     {
-        //
+        $course = CourseUnit::with('students.user')->findOrFail($id);
+        return view('lecturer.course-students', compact('course'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Lecturer $lecturer)
+    
+    public function studentShow($id)
     {
-        //
+        $student = User::findOrFail($id)->student;
+        return view('lecturer.student-show', compact('student'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Lecturer $lecturer)
+    
+    public function schedule()
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Lecturer $lecturer)
-    {
-        //
+        $lecturer = Auth::user()->lecturer;
+        $schedule = []; // Fetch from schedule table
+        return view('lecturer.schedule', compact('schedule'));
     }
 }

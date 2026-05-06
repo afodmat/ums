@@ -174,6 +174,38 @@
             </li>
             @endrole
 
+            @role('super_admin|admin')
+            <li class="nav-item">
+                <a @click.prevent="toggleMenu('programs')" 
+                   class="nav-link flex items-center justify-between gap-3 px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 {{ request()->routeIs('admin.*') ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' : 'text-gray-300 hover:bg-white/10 hover:text-white' }}">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-user-shield w-5"></i>
+                        <span x-show="!collapsed" class="font-medium whitespace-nowrap">Course Units</span>
+                    </div>
+                    <i x-show="!collapsed" class="fas fa-chevron-down transition-transform duration-200" 
+                       :style="openMenus.programs ? 'transform: rotate(180deg);' : 'transform: rotate(0deg);'"></i>
+                </a>
+
+                <div x-show="openMenus.programs && !collapsed" 
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0 transform -translate-y-2"
+                     x-transition:enter-end="opacity-100 transform translate-y-0"
+                     x-cloak
+                     class="mt-1 ml-8 space-y-1 border-l-2 border-white/20 pl-3">
+                    <a href="{{ route('courseUnit.index') }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('program.index') ? 'text-blue-400 bg-white/5' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
+                        <i class="fas fa-users w-4 text-xs"></i>
+                        <span>All Course Units</span>
+                    </a>
+                    <a href="{{ route('courseUnit.create') }}"
+                       class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200 {{ request()->routeIs('program.create') ? 'text-blue-400 bg-white/5' : 'text-gray-400 hover:text-white hover:bg-white/5' }}">
+                        <i class="fas fa-user-plus w-4 text-xs"></i>
+                        <span>Add Course Unit</span>
+                    </a>
+                </div>
+            </li>
+            @endrole
+
             <!-- ACADEMICS DROPDOWN -->
             @role('super_admin|admin|lecturer')
             <li class="nav-item">
